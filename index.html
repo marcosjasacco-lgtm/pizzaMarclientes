@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#ed1c2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>PizzaMar · Pedidos</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root{--red:#ed1c2e;--red2:#c91525;--ink:#171717;--muted:#757575;--line:#e9e9e9;--paper:#f8f7f4;--white:#fff;--green:#17a857;--yellow:#ffd247;--shadow:0 12px 34px rgba(0,0,0,.08)}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--paper);color:var(--ink)}
+    button,input,select,textarea{font:inherit} button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;min-height:100vh;background:var(--paper);padding-bottom:92px}
+    .top{position:sticky;top:0;z-index:30;background:rgba(248,247,244,.94);backdrop-filter:blur(12px);padding:14px 18px;border-bottom:1px solid rgba(0,0,0,.04);display:flex;align-items:center;justify-content:space-between}
+    .brand{font-size:29px;font-weight:900;letter-spacing:-1px}.brand span{color:var(--red)} .sub{font-size:13px;color:var(--muted)}
+    .iconbtn{border:0;background:#fff;width:44px;height:44px;border-radius:50%;box-shadow:0 5px 18px rgba(0,0,0,.06);font-size:20px}
+    .screen{display:none;padding:14px 16px 28px}.screen.active{display:block}
+    .hero{border-radius:28px;overflow:hidden;background:#0b0b0b;min-height:340px;position:relative;box-shadow:var(--shadow)}
+    .hero img{position:absolute;right:0;top:0;width:58%;height:100%;object-fit:cover}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b0b0b 0%,#0b0b0b 37%,rgba(11,11,11,.82) 50%,rgba(11,11,11,.1) 75%)}
+    .heroContent{position:relative;z-index:2;color:#fff;padding:30px 24px;width:58%}.hero .eyebrow{font-weight:900;color:var(--yellow);font-size:18px}.hero h1{font-size:42px;line-height:.98;margin:8px 0 8px;letter-spacing:-1.4px}.hero p{margin:0 0 18px;color:#ddd;font-size:18px}.pricePill{display:inline-flex;background:var(--red);color:#fff;border-radius:999px;padding:11px 16px;font-weight:900;font-size:21px}
+    .openrow{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center}.open{font-weight:900}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;background:#26c96d;margin-right:7px}.wa{color:var(--green);font-weight:800;text-decoration:none}
+    .chips{display:flex;gap:9px;overflow:auto;padding:14px 0 4px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chip{white-space:nowrap;border:0;border-radius:999px;padding:11px 15px;background:#eae8e5;font-weight:800}.chip.active{background:var(--red);color:#fff}
+    .sectionTitle{display:flex;align-items:end;justify-content:space-between;margin:23px 3px 12px}.sectionTitle h2{margin:0;font-size:30px;letter-spacing:-.7px}.link{color:var(--red);font-weight:800;border:0;background:none}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 7px 22px rgba(0,0,0,.04)}.card img{width:100%;height:145px;object-fit:cover;background:#090909}.cardBody{padding:13px}.card h3{margin:0 0 5px;font-size:20px}.desc{font-size:14px;color:var(--muted);min-height:38px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.money{font-weight:900;color:var(--red);font-size:21px}.plus{border:0;background:var(--red);color:#fff;width:40px;height:40px;border-radius:50%;font-size:25px;line-height:1}
+    .placeholder{height:145px;background:linear-gradient(135deg,#161616,#303030);display:grid;place-items:center;font-size:54px;color:#fff}
+    .cartbar{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:12px;width:min(728px,calc(100% - 26px));background:var(--red);color:#fff;border:0;border-radius:22px;padding:16px 18px;font-weight:900;font-size:18px;box-shadow:0 12px 35px rgba(237,28,46,.3);display:flex;justify-content:space-between}.cartbar[hidden]{display:none}
+    .pageHead{display:flex;align-items:center;gap:10px;margin:3px 0 14px}.back{border:0;background:#fff;width:42px;height:42px;border-radius:50%;font-size:24px}.pageHead h1{font-size:31px;margin:0}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px;margin-bottom:14px}.panel h2{margin:0 0 14px;font-size:25px}.cartItem{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.cartItem:last-child{border-bottom:0}.cartItem img{width:72px;height:72px;object-fit:cover;border-radius:15px}.qty{display:flex;align-items:center;gap:10px}.qty button{border:0;background:#f0efed;border-radius:12px;width:34px;height:34px;font-weight:900}.trash{border:0;background:none;font-size:18px;color:#999}
+    .notice{border-radius:18px;padding:14px 16px;background:#eaf8ef;color:#166b38;font-weight:800;margin:12px 0}.field{margin:12px 0}.field label{display:block;font-size:13px;font-weight:800;color:var(--muted);margin:0 0 6px}.field input,.field textarea,.field select{width:100%;border:1px solid #ddd;border-radius:14px;padding:13px 14px;background:#fff;outline:none}.field input:focus,.field textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(237,28,46,.08)}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{border:2px solid #eee;border-radius:18px;padding:15px;background:#fff;text-align:left}.option.selected{border-color:var(--red);background:#fff5f6}.option b{display:block;font-size:18px}.option small{color:var(--muted)}
+    .payment{display:grid;gap:9px}.pay{padding:15px;border:1px solid #ddd;border-radius:17px;background:#fff;display:flex;justify-content:space-between;align-items:center}.pay.selected{border:2px solid var(--red);background:#fff5f6}.pay strong{font-size:18px}
+    .summary .sumrow{display:flex;justify-content:space-between;padding:6px 0}.summary .discount{color:var(--green);font-weight:900}.summary .total{border-top:1px solid var(--line);margin-top:8px;padding-top:12px;font-size:26px;font-weight:900}.summary .total span:last-child{color:var(--red)}
+    .primary{width:100%;border:0;background:var(--red);color:#fff;border-radius:18px;padding:16px;font-weight:900;font-size:20px;margin-top:10px}.secondary{width:100%;border:1px solid #ddd;background:#fff;border-radius:18px;padding:14px;font-weight:800;margin-top:9px}.smallhint{color:var(--muted);font-size:13px;margin-top:8px}.tag{display:inline-flex;border-radius:999px;padding:7px 11px;background:#ffe7ea;color:var(--red);font-weight:900;font-size:13px}.paid{background:#e9f8ef;color:#188746}.timeline{display:flex;justify-content:space-between;gap:6px;margin:22px 0 8px;position:relative}.timeline:before{content:"";position:absolute;height:4px;background:#ddd;left:8%;right:8%;top:18px}.step{position:relative;z-index:2;text-align:center;flex:1;font-size:12px;color:#777}.circle{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;margin:0 auto 7px;background:#ddd;color:#fff;font-weight:900}.step.done .circle,.step.current .circle{background:var(--red)}.step.done,.step.current{color:var(--ink);font-weight:800}.done .circle:before{content:"✓"}.current .circle:before{content:"●"}
+    .success{text-align:center;padding:45px 10px}.check{width:90px;height:90px;border-radius:50%;background:#22b35f;color:#fff;display:grid;place-items:center;margin:10px auto 18px;font-size:48px;font-weight:900}.success h1{font-size:36px;margin:0}.success p{color:var(--muted);font-size:17px}
+    .bottomnav{position:fixed;z-index:35;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px max(8px,env(safe-area-inset-bottom))}.navbtn{border:0;background:none;color:#777;font-size:12px;font-weight:700}.navbtn span{display:block;font-size:21px}.navbtn.active{color:var(--red)}
+    .cartbar:not([hidden])~.bottomnav{display:none}
+    @media (max-width:480px){.hero{min-height:300px}.hero h1{font-size:35px}.heroContent{width:63%;padding:25px 18px}.hero img{width:62%}.grid{grid-template-columns:1fr 1fr}.card img,.placeholder{height:120px}.card h3{font-size:17px}.money{font-size:18px}.options{grid-template-columns:1fr}.two{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><div><div class="brand">Pizza<span>Mar</span></div><div class="sub">Pedí directo a PizzaMar</div></div><button class="iconbtn" onclick="showScreen('profile')">👤</button></header>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="hero">
+        <img src="assets/super-especial.jpg" alt="Súper Especial" />
+        <div class="heroContent"><div class="eyebrow">👑 SÚPER</div><h1>ESPECIAL</h1><p>4 sabores a elección</p><div class="pricePill">$ 17.000</div></div>
+      </div>
+      <div class="openrow"><div><span class="dot"></span><span class="open">Abierto · Mar a Dom</span><div class="sub">Delivery y retiro en Ecuador 8348</div></div><a class="wa" href="https://wa.me/5491128754818" target="_blank">WhatsApp</a></div>
+      <div class="chips" id="chips"></div>
+      <div class="sectionTitle"><h2>Nuestras pizzas</h2><button class="link" onclick="setCategory('Pizzas')">Ver todas ›</button></div>
+      <div class="grid" id="products"></div>
+    </section>
+
+    <section id="cart" class="screen"><div class="pageHead"><button class="back" onclick="showScreen('home')">‹</button><h1>Tu pedido</h1></div><div class="panel" id="cartItems"></div><div class="notice">🔥 15% OFF aplicado a la compra. El envío se cobra aparte.</div><div class="panel summary" id="cartSummary"></div><button class="primary" onclick="showScreen('delivery')">Continuar</button></section>
+
+    <section id="delivery" class="screen"><div class="pageHead"><button class="back" onclick="showScreen('cart')">‹</button><h1>Datos de entrega</h1></div><div class="panel"><div class="options"><button class="option selected" id="optDelivery" onclick="setFulfillment('delivery')"><b>🛵 Delivery</b><small>Te lo llevamos</small></button><button class="option" id="optPickup" onclick="setFulfillment('pickup')"><b>🏪 Retiro</b><small>Ecuador 8348</small></button></div></div><form class="panel" id="customerForm"><h2>Información guardada</h2><p class="smallhint">La completás una sola vez. Después queda guardada en este teléfono.</p><div class="field"><label>Nombre</label><input id="name" required placeholder="Tu nombre" /></div><div class="field"><label>Dirección y altura</label><input id="address" required placeholder="Ej: Ecuador 8348" /></div><div class="field"><label>Entre calles</label><input id="cross" required placeholder="Ej: Victoria y Atalaya" /></div><div class="field"><label>Barrio</label><input id="neighborhood" required placeholder="Ej: Moreno" /></div><div class="field"><label>Teléfono</label><input id="phone" inputmode="tel" placeholder="Tu teléfono" /></div></form><div class="panel" id="shippingPanel"><h2>Costo de envío</h2><div class="options"><button class="option selected" id="shipNear" onclick="setShipping('near')"><b>Hasta 3 cuadras</b><small>$500</small></button><button class="option" id="shipFar" onclick="setShipping('far')"><b>Más de 3 cuadras</b><small>$1.500</small></button></div><p class="smallhint">En la versión final podemos calcular la distancia automáticamente.</p></div><button class="primary" onclick="saveCustomerAndNext()">Continuar</button></section>
+
+    <section id="payment" class="screen"><div class="pageHead"><button class="back" onclick="showScreen('delivery')">‹</button><h1>Forma de pago</h1></div><div class="panel payment"><button class="pay selected" id="payCash" onclick="setPayment('cash')"><strong>💵 Efectivo</strong><span>○</span></button><button class="pay" id="payTransfer" onclick="setPayment('transfer')"><strong>↔️ Transferencia</strong><span>○</span></button><button class="pay" id="payMP" onclick="setPayment('mp')"><strong>💳 Mercado Pago</strong><span>○</span></button></div><div class="panel" id="electronicInfo" style="display:none"><h2>Pago electrónico</h2><p>Alias: <b>Pizzamar.2017</b></p><p class="smallhint">Transferencia y Mercado Pago figuran como “Pago electrónico” en la comandera.</p></div><button class="primary" onclick="showScreen('review'); renderReview()">Revisar pedido</button></section>
+
+    <section id="review" class="screen"><div class="pageHead"><button class="back" onclick="showScreen('payment')">‹</button><h1>Confirmar pedido</h1></div><div class="panel" id="reviewProducts"></div><div class="panel" id="reviewCustomer"></div><div class="panel summary" id="reviewSummary"></div><button class="primary" onclick="confirmOrder()">Confirmar pedido</button></section>
+
+    <section id="confirmed" class="screen"><div class="success"><div class="check">✓</div><h1>¡Pedido confirmado!</h1><p id="confirmedText"></p><button class="primary" onclick="showScreen('orders'); renderOrders()">Ver mi pedido</button><button class="secondary" onclick="newOrder()">Hacer otro pedido</button></div></section>
+
+    <section id="orders" class="screen"><div class="pageHead"><h1>Mis pedidos</h1></div><div id="activeOrder"></div><div class="sectionTitle"><h2>Volver a pedir</h2></div><div id="orderHistory"></div></section>
+
+    <section id="profile" class="screen"><div class="pageHead"><button class="back" onclick="showScreen('home')">‹</button><h1>Mi perfil</h1></div><div class="panel" id="profileData"></div><div class="notice">Tus datos quedan guardados para los próximos pedidos.</div><a class="primary" style="display:block;text-align:center;text-decoration:none" href="https://wa.me/5491128754818" target="_blank">Consultas por WhatsApp</a></section>
+  </main>
+
+  <button id="cartbar" class="cartbar" hidden onclick="showScreen('cart');renderCart()"><span>🛒 Ver mi pedido · <b id="cartCount">0</b></span><span id="cartTotal">$0</span></button>
+  <nav class="bottomnav" id="bottomnav"><button class="navbtn active" data-screen="home" onclick="showScreen('home')"><span>⌂</span>Inicio</button><button class="navbtn" data-screen="home" onclick="showScreen('home');setCategory('Promos')"><span>🏷</span>Promos</button><button class="navbtn" data-screen="orders" onclick="showScreen('orders');renderOrders()"><span>☷</span>Pedidos</button><button class="navbtn" data-screen="profile" onclick="showScreen('profile');renderProfile()"><span>👤</span>Perfil</button></nav>
+</div>
+<script>
+const products=[
+ {id:'super',name:'Súper Especial',price:17000,cat:'Promos',desc:'Elegí hasta 4 sabores en una misma pizza.',img:'assets/super-especial.jpg'},
+ {id:'muzza',name:'Muzza',price:11000,cat:'Pizzas',desc:'Salsa de tomate, mozzarella, orégano y aceitunas.',img:'assets/muzza.jpg'},
+ {id:'napo',name:'Napolitana',price:13500,cat:'Pizzas',desc:'Salsa, mozzarella, tomate en rodajas, orégano y aceitunas.',img:'assets/napolitana.jpg'},
+ {id:'jym',name:'Jamón y morrón',price:14500,cat:'Pizzas',desc:'Salsa, mozzarella, jamón, morrones, orégano y aceitunas.',img:'assets/jamon-morron.jpg'},
+ {id:'fuga',name:'Fugazzeta',price:13000,cat:'Pizzas',desc:'Mozzarella, cebolla, orégano y aceitunas.',img:'assets/fugazzeta.jpg'},
+ {id:'caprese',name:'Caprese',price:14000,cat:'Pizzas',desc:'Salsa, mozzarella, tomates cherry, albahaca y aceitunas.',img:'assets/caprese.jpg'},
+ {id:'doble',name:'Muzza doble',price:12500,cat:'Pizzas',desc:'Extra mozzarella.',emoji:'🍕'},
+ {id:'panceta',name:'Panceta ahumada',price:16500,cat:'Pizzas',desc:'Mozzarella y panceta ahumada.',emoji:'🍕'},
+ {id:'jmhe',name:'Jamón y morrón con huevo',price:15000,cat:'Pizzas',desc:'Jamón, morrón y huevo.',emoji:'🍕'},
+ {id:'rucula',name:'Rúcula, crudo y parmesano',price:16000,cat:'Pizzas',desc:'Rúcula, jamón crudo y parmesano.',emoji:'🍕'},
+ {id:'roque',name:'Roquefort',price:14500,cat:'Pizzas',desc:'Mozzarella y roquefort.',emoji:'🍕'},
+ {id:'cochina',name:'Cochina',price:16000,cat:'Pizzas',desc:'Especial de PizzaMar.',emoji:'🍕'},
+ {id:'emp12c',name:'Empanadas carne x12',price:23000,cat:'Empanadas',desc:'Docena de carne.',emoji:'🥟'},
+ {id:'emp6c',name:'Empanadas carne x6',price:13000,cat:'Empanadas',desc:'Media docena de carne.',emoji:'🥟'},
+ {id:'emp12p',name:'Empanadas pollo x12',price:21000,cat:'Empanadas',desc:'Docena de pollo.',emoji:'🥟'},
+ {id:'emp12jyq',name:'Empanadas JyQ x12',price:19000,cat:'Empanadas',desc:'Docena de jamón y queso.',emoji:'🥟'},
+ {id:'burgs',name:'Burger cheddar + panceta',price:9500,cat:'Hamburguesas',desc:'Simple.',emoji:'🍔'},
+ {id:'burgd',name:'Burger doble',price:12000,cat:'Hamburguesas',desc:'Doble carne, cheddar y panceta.',emoji:'🍔'},
+ {id:'burgt',name:'Burger triple',price:14500,cat:'Hamburguesas',desc:'Triple carne.',emoji:'🍔'},
+ {id:'mila',name:'Milanesa con fritas',price:23000,cat:'Otros',desc:'Milanesa napolitana con papas fritas.',emoji:'🍽️'},
+ {id:'fritas',name:'Porción de fritas',price:3500,cat:'Otros',desc:'Papas fritas.',emoji:'🍟'},
+ {id:'coca125',name:'Coca-Cola 1,25 L',price:4500,cat:'Bebidas',desc:'Bebida.',emoji:'🥤'},
+ {id:'coca225',name:'Coca-Cola 2,25 L',price:6000,cat:'Bebidas',desc:'Bebida.',emoji:'🥤'},
+ {id:'brahma',name:'Brahma lata',price:3000,cat:'Bebidas',desc:'Cerveza.',emoji:'🥫'},
+ {id:'sch',name:'Schneider 710 ml',price:4500,cat:'Bebidas',desc:'Cerveza.',emoji:'🥫'}
+];
+const cats=['Promos','Pizzas','Empanadas','Hamburguesas','Otros','Bebidas'];
+let state={cart:JSON.parse(localStorage.getItem('pm_cart')||'[]'),category:'Promos',fulfillment:'delivery',shipping:'near',payment:'cash'};
+const el=id=>document.getElementById(id);
+const cartCount=el('cartCount'), cartTotal=el('cartTotal'), cartbar=el('cartbar'), chips=el('chips'), cartItems=el('cartItems'), cartSummary=el('cartSummary'), shippingPanel=el('shippingPanel'), customerForm=el('customerForm'), electronicInfo=el('electronicInfo'), reviewProducts=el('reviewProducts'), reviewCustomer=el('reviewCustomer'), reviewSummary=el('reviewSummary'), confirmedText=el('confirmedText'), activeOrder=el('activeOrder'), orderHistory=el('orderHistory'), profileData=el('profileData');
+const nameInput=el('name'), addressInput=el('address'), crossInput=el('cross'), neighborhoodInput=el('neighborhood'), phoneInput=el('phone');
+const optDelivery=el('optDelivery'), optPickup=el('optPickup'), shipNear=el('shipNear'), shipFar=el('shipFar');
+const money=n=>'$ '+Math.round(n).toLocaleString('es-AR');
+function productById(id){return products.find(p=>p.id===id)}
+function cartLines(){return state.cart.map(x=>({...productById(x.id),qty:x.qty,flavors:x.flavors||[]}))}
+function subtotal(){return cartLines().reduce((s,x)=>s+x.price*x.qty,0)}
+function discount(){return Math.round(subtotal()*.15)}
+function shipping(){return state.fulfillment==='pickup'?0:(state.shipping==='near'?500:1500)}
+function total(){return subtotal()-discount()+shipping()}
+function persist(){localStorage.setItem('pm_cart',JSON.stringify(state.cart));updateCartBar()}
+function add(id){let x=state.cart.find(i=>i.id===id);if(x)x.qty++;else state.cart.push({id,qty:1});persist()}
+function changeQty(id,d){let x=state.cart.find(i=>i.id===id);if(!x)return;x.qty+=d;if(x.qty<=0)state.cart=state.cart.filter(i=>i.id!==id);persist();renderCart()}
+function removeItem(id){state.cart=state.cart.filter(i=>i.id!==id);persist();renderCart()}
+function updateCartBar(){const count=state.cart.reduce((s,x)=>s+x.qty,0);cartCount.textContent=count;cartTotal.textContent=money(subtotal());cartbar.hidden=count===0||!['home'].includes(document.querySelector('.screen.active')?.id)}
+function renderChips(){chips.innerHTML=cats.map(c=>`<button class="chip ${state.category===c?'active':''}" onclick="setCategory('${c}')">${({Promos:'🔥',Pizzas:'🍕',Empanadas:'🥟',Hamburguesas:'🍔',Otros:'🍟',Bebidas:'🥤'})[c]} ${c}</button>`).join('')}
+function setCategory(c){state.category=c;renderChips();renderProducts()}
+function renderProducts(){let arr=products.filter(p=>p.cat===state.category);if(state.category==='Promos')arr=[productById('super'),productById('muzza'),productById('jym'),productById('napo')];productsEl= document.getElementById('products');productsEl.innerHTML=arr.map(p=>`<article class="card">${p.img?`<img src="${p.img}" alt="${p.name}">`:`<div class="placeholder">${p.emoji||'🍕'}</div>`}<div class="cardBody"><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="row"><span class="money">${money(p.price)}</span><button class="plus" onclick="add('${p.id}')">+</button></div></div></article>`).join('')}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));if(id==='profile')renderProfile();if(id==='orders')renderOrders();updateCartBar();window.scrollTo(0,0)}
+function renderCart(){if(!state.cart.length){cartItems.innerHTML='<p>Tu carrito está vacío.</p>';cartSummary.innerHTML='';return}cartItems.innerHTML=cartLines().map(x=>`<div class="cartItem">${x.img?`<img src="${x.img}">`:`<div class="placeholder" style="height:72px">${x.emoji||'🍕'}</div>`}<div><b>${x.name}</b><div class="sub">${money(x.price)}</div><div class="qty"><button onclick="changeQty('${x.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${x.id}',1)">+</button></div></div><button class="trash" onclick="removeItem('${x.id}')">🗑</button></div>`).join('');cartSummary.innerHTML=summaryHtml()}
+function summaryHtml(){return `<div class="sumrow"><span>Compra</span><b>${money(subtotal())}</b></div><div class="sumrow discount"><span>Descuento app 15%</span><b>−${money(discount())}</b></div><div class="sumrow"><span>Envío</span><b>${money(shipping())}</b></div><div class="sumrow total"><span>Total</span><span>${money(total())}</span></div><div class="smallhint">El descuento aplica solo a la compra. El envío se cobra aparte.</div>`}
+function setFulfillment(v){state.fulfillment=v;optDelivery.classList.toggle('selected',v==='delivery');optPickup.classList.toggle('selected',v==='pickup');shippingPanel.style.display=v==='pickup'?'none':'block'}
+function setShipping(v){state.shipping=v;shipNear.classList.toggle('selected',v==='near');shipFar.classList.toggle('selected',v==='far')}
+function fillSaved(){const c=JSON.parse(localStorage.getItem('pm_customer')||'{}');nameInput.value=c.name||'';addressInput.value=c.address||'';crossInput.value=c.cross||'';neighborhoodInput.value=c.neighborhood||'';phoneInput.value=c.phone||''}
+function saveCustomerAndNext(){if(state.fulfillment==='delivery'&&!customerForm.reportValidity())return;const c={name:nameInput.value.trim(),address:addressInput.value.trim(),cross:crossInput.value.trim(),neighborhood:neighborhoodInput.value.trim(),phone:phoneInput.value.trim()};localStorage.setItem('pm_customer',JSON.stringify(c));showScreen('payment')}
+function setPayment(v){state.payment=v;['Cash','Transfer','MP'].forEach(k=>document.getElementById('pay'+k).classList.remove('selected'));document.getElementById(v==='cash'?'payCash':v==='transfer'?'payTransfer':'payMP').classList.add('selected');electronicInfo.style.display=v==='cash'?'none':'block'}
+function renderReview(){const c=JSON.parse(localStorage.getItem('pm_customer')||'{}');reviewProducts.innerHTML='<h2>Tu pedido</h2>'+cartLines().map(x=>`<div class="row" style="padding:8px 0"><span><b>${x.qty} × ${x.name}</b></span><span>${money(x.price*x.qty)}</span></div>`).join('');reviewCustomer.innerHTML=`<h2>Datos de entrega</h2><p><b>${c.name||'Sin nombre'}</b></p>${state.fulfillment==='delivery'?`<p>${c.address||''}<br>${c.cross||''} · ${c.neighborhood||''}</p>`:'<p>Retiro en Ecuador 8348</p>'}<span class="tag ${state.payment==='cash'?'':'paid'}">${state.payment==='cash'?'Efectivo':'Pago electrónico'}</span>`;reviewSummary.innerHTML=summaryHtml()}
+function confirmOrder(){if(!state.cart.length)return;const orders=JSON.parse(localStorage.getItem('pm_orders')||'[]');const num=Number(localStorage.getItem('pm_next')||'1');const c=JSON.parse(localStorage.getItem('pm_customer')||'{}');const order={id:num,createdAt:new Date().toISOString(),customer:c,items:cartLines(),subtotal:subtotal(),discount:discount(),shipping:shipping(),total:total(),payment:state.payment==='cash'?'Efectivo':'Pago electrónico',fulfillment:state.fulfillment,status:'Pedido recibido'};orders.unshift(order);localStorage.setItem('pm_orders',JSON.stringify(orders));localStorage.setItem('pm_next',String(num+1));localStorage.removeItem('pm_cart');state.cart=[];persist();confirmedText.textContent=`Pedido N°${num}. Ya lo recibimos en PizzaMar.`;showScreen('confirmed')}
+function renderOrders(){const orders=JSON.parse(localStorage.getItem('pm_orders')||'[]');if(!orders.length){activeOrder.innerHTML='<div class="panel"><p>Todavía no hiciste pedidos desde esta app.</p></div>';orderHistory.innerHTML='';return}const o=orders[0];activeOrder.innerHTML=`<div class="panel"><div class="row"><h2 style="margin:0">Pedido N°${o.id}</h2><span class="tag">${o.status}</span></div><p><b>${o.items.map(x=>`${x.qty} ${x.name}`).join(' + ')}</b></p><div class="timeline"><div class="step done"><div class="circle"></div>Recibido</div><div class="step current"><div class="circle"></div>Preparación</div><div class="step"><div class="circle"></div>En camino</div><div class="step"><div class="circle"></div>Entregado</div></div><div class="row"><span>${o.payment}</span><b>${money(o.total)}</b></div></div>`;orderHistory.innerHTML=orders.slice(1,5).map(x=>`<div class="panel"><div class="row"><div><b>Pedido N°${x.id}</b><div class="sub">${new Date(x.createdAt).toLocaleString('es-AR')}</div></div><b>${money(x.total)}</b></div></div>`).join('')}
+function renderProfile(){const c=JSON.parse(localStorage.getItem('pm_customer')||'{}');profileData.innerHTML=`<h2>Información guardada</h2><p><b>Nombre:</b> ${c.name||'Todavía no cargado'}</p><p><b>Dirección:</b> ${c.address||'—'}</p><p><b>Entre calles:</b> ${c.cross||'—'}</p><p><b>Barrio:</b> ${c.neighborhood||'—'}</p><p><b>Teléfono:</b> ${c.phone||'—'}</p><button class="secondary" onclick="fillSaved();showScreen('delivery')">Editar mis datos</button>`}
+function newOrder(){showScreen('home')}
+renderChips();renderProducts();fillSaved();updateCartBar();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
