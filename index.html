@@ -120,7 +120,38 @@ function removeItem(id){state.cart=state.cart.filter(i=>i.id!==id);persist();ren
 function updateCartBar(){const count=state.cart.reduce((s,x)=>s+x.qty,0);cartCount.textContent=count;cartTotal.textContent=money(subtotal());cartbar.hidden=count===0||!['home'].includes(document.querySelector('.screen.active')?.id)}
 function renderChips(){chips.innerHTML=cats.map(c=>`<button class="chip ${state.category===c?'active':''}" onclick="setCategory('${c}')">${({Promos:'🔥',Pizzas:'🍕',Empanadas:'🥟',Hamburguesas:'🍔',Otros:'🍟',Bebidas:'🥤'})[c]} ${c}</button>`).join('')}
 function setCategory(c){state.category=c;renderChips();renderProducts()}
-function renderProducts(){let arr=products.filter(p=>p.cat===state.category);if(state.category==='Promos')arr=[productById('super'),productById('muzza'),productById('jym'),productById('napo')];productsEl= document.getElementById('products');productsEl.innerHTML=arr.map(p=>`<article class="card">${p.img?`<img src="${p.img}" alt="${p.name}">`:`<div class="placeholder">${p.emoji||'🍕'}</div>`}<div class="cardBody"><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="row"><span class="money">${money(p.price)}</span><button class="plus" onclick="add('${p.id}')">+</button></div></div></article>`).join('')}
+function renderProducts(){
+  let arr=products.filter(p=>p.cat===state.category);
+
+  if(state.category==='Promos'){
+    arr=[
+      productById('super'),
+      productById('muzza'),
+      productById('jym'),
+      productById('napo')
+    ].filter(Boolean);
+  }
+
+  const productsEl=document.getElementById('products');
+  if(!productsEl)return;
+
+  productsEl.innerHTML=arr.map(p=>`
+    <article class="card">
+      ${p.img
+        ? `<img src="${p.img}" alt="${p.name}">`
+        : `<div class="placeholder">${p.emoji||'🍕'}</div>`
+      }
+      <div class="cardBody">
+        <h3>${p.name}</h3>
+        <div class="desc">${p.desc}</div>
+        <div class="row">
+          <span class="money">${money(p.price)}</span>
+          <button class="plus" onclick="add('${p.id}')">+</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));if(id==='profile')renderProfile();if(id==='orders')renderOrders();updateCartBar();window.scrollTo(0,0)}
 function renderCart(){if(!state.cart.length){cartItems.innerHTML='<p>Tu carrito está vacío.</p>';cartSummary.innerHTML='';return}cartItems.innerHTML=cartLines().map(x=>`<div class="cartItem">${x.img?`<img src="${x.img}">`:`<div class="placeholder" style="height:72px">${x.emoji||'🍕'}</div>`}<div><b>${x.name}</b><div class="sub">${money(x.price)}</div><div class="qty"><button onclick="changeQty('${x.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${x.id}',1)">+</button></div></div><button class="trash" onclick="removeItem('${x.id}')">🗑</button></div>`).join('');cartSummary.innerHTML=summaryHtml()}
 function summaryHtml(){return `<div class="sumrow"><span>Compra</span><b>${money(subtotal())}</b></div><div class="sumrow discount"><span>Descuento app 15%</span><b>−${money(discount())}</b></div><div class="sumrow"><span>Envío</span><b>${money(shipping())}</b></div><div class="sumrow total"><span>Total</span><span>${money(total())}</span></div><div class="smallhint">El descuento aplica solo a la compra. El envío se cobra aparte.</div>`}
