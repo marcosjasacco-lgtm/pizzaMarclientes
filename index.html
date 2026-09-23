@@ -101,7 +101,7 @@ const products=[
  {id:'sch',name:'Schneider 710 ml',price:4500,cat:'Bebidas',desc:'Cerveza.',emoji:'🥫'}
 ];
 const cats=['Promos','Pizzas','Empanadas','Hamburguesas','Otros','Bebidas'];
-let state={cart:JSON.parse(localStorage.getItem('pm_cart')||'[]'),category:'Promos',fulfillment:'delivery',shipping:'near',payment:'cash'};
+let state={cart:JSON.parse(localStorage.getItem('pm_cart')||'[]'),category:'Pizzas',fulfillment:'delivery',shipping:'near',payment:'cash'};
 const el=id=>document.getElementById(id);
 const cartCount=el('cartCount'), cartTotal=el('cartTotal'), cartbar=el('cartbar'), chips=el('chips'), cartItems=el('cartItems'), cartSummary=el('cartSummary'), shippingPanel=el('shippingPanel'), customerForm=el('customerForm'), electronicInfo=el('electronicInfo'), reviewProducts=el('reviewProducts'), reviewCustomer=el('reviewCustomer'), reviewSummary=el('reviewSummary'), confirmedText=el('confirmedText'), activeOrder=el('activeOrder'), orderHistory=el('orderHistory'), profileData=el('profileData');
 const nameInput=el('name'), addressInput=el('address'), crossInput=el('cross'), neighborhoodInput=el('neighborhood'), phoneInput=el('phone');
