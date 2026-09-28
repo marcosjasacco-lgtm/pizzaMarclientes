@@ -168,7 +168,18 @@
 
     const createOrder = async (payload) => {
   const clientToken = payload.client_token || randomToken();
-  const body = { ...payload, client_token: clientToken };
+  const body = {
+  ...payload,
+  client_token: clientToken,
+  customer: payload.customer || {
+    name: payload.customer_name || "Sin nombre",
+    phone: payload.phone || "",
+    address: payload.address || "",
+    cross_streets: payload.cross_streets || "",
+    neighborhood: payload.neighborhood || ""
+  },
+  fulfillment: payload.fulfillment === "pickup" ? "pickup" : "delivery"
+};
 
   const orderId = window.crypto.randomUUID();
 
