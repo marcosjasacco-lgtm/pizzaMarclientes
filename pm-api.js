@@ -167,52 +167,20 @@
     };
 
     const createOrder = async (payload) => {
-      const clientToken = payload.client_token || randomToken();
-      const body = { ...payload, client_token: clientToken };
-      const variants = [
-        { p_customer_name: body.customer_name, p_payload: body },
-        { p_payload: body },
-        { p_order: body },
-        { payload: body },
-        { order: body },
-        {
-          p_customer_name: body.customer_name,
-          p_phone: body.phone,
-          p_address: body.address,
-          p_cross_streets: body.cross_streets,
-          p_neighborhood: body.neighborhood,
-          p_fulfillment: body.fulfillment,
-          p_payment_method: body.payment_method,
-          p_items: body.items,
-          p_client_token: body.client_token
-        }
-      ];
-      const response = await rpcVariants(db, RPC.create, variants);
-      if (!response.error) return { data: normalizeOrder(response.data), error: null };
+  const clientToken = payload.client_token || randomToken();
+  const body = { ...payload, client_token: clientToken };
 
-      const fallbackRows = [
-        {
-          status: "pending", customer_name: body.customer_name, customer_phone: body.phone,
-          address: body.address, cross_streets: body.cross_streets, neighborhood: body.neighborhood,
-          fulfillment: body.fulfillment, payment_method: body.payment_method, items: body.items,
-          subtotal: body.subtotal, discount: body.discount, shipping: body.shipping, total: body.total,
-          public_token: body.client_token
-        },
-        {
-          status: "pending", customer_name: body.customer_name, phone: body.phone,
-          delivery_address: body.address, cross_streets: body.cross_streets, neighborhood: body.neighborhood,
-          fulfillment_type: body.fulfillment, payment_method: body.payment_method, items: body.items,
-          subtotal: body.subtotal, discount: body.discount, shipping_cost: body.shipping, total: body.total,
-          client_token: body.client_token
-        }
-      ];
-      for (const row of fallbackRows) {
-        const insert = await db.from("pm_web_orders").insert(row).select("*").single();
-        if (!insert.error) return { data: normalizeOrder(insert.data), error: null };
-        if (!signatureError(insert.error)) return { data: null, error: insert.error };
-      }
-      return { data: null, error: response.error };
-    };
+  const response = await db.rpc("pm_create_order", {
+    p_customer_name: body.customer_name,
+    p_payload: body
+  });
+
+  if (!response.error) {
+    return { data: normalizeOrder(response.data), error: null };
+  }
+
+  return { data: null, error: response.error };
+};
 
     const getOrder = async (orderId, token) => {
       const variants = [
