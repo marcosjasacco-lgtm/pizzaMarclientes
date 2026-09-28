@@ -39,7 +39,7 @@
     const parsed = parseMaybeJson(value);
     if (Array.isArray(parsed)) return parsed;
     if (parsed && typeof parsed === "object") {
-      for (const key of ["orders", "data", "items", "results"]) {
+      for (const key of ["orders", "data", "items", "results", "products", "catalog"]) {
         if (Array.isArray(parsed[key])) return parsed[key];
       }
       if (parsed.order || parsed.id || parsed.order_id) return [parsed.order || parsed];
