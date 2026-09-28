@@ -170,10 +170,13 @@
   const clientToken = payload.client_token || randomToken();
   const body = { ...payload, client_token: clientToken };
 
-  const response = await db.rpc("pm_create_order", {
-    p_customer_name: body.customer_name,
-    p_payload: body
-  });
+  const orderId = window.crypto.randomUUID();
+
+const response = await db.rpc("pm_create_order", {
+  p_id: orderId,
+  p_token: clientToken,
+  p_payload: body
+});
 
   if (!response.error) {
     return { data: normalizeOrder(response.data), error: null };
