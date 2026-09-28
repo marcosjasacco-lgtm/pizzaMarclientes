@@ -194,7 +194,7 @@ async function confirmOrder(){
     client_token:clientToken,customer_name:c.name||'Sin nombre',phone:c.phone||'',address:c.address||'',cross_streets:c.cross||'',neighborhood:c.neighborhood||'',
     fulfillment:state.fulfillment,shipping_zone:state.fulfillment==='pickup'?null:state.shipping,payment_method:state.payment==='cash'?'Efectivo':state.payment==='transfer'?'Transferencia':'Mercado Pago',payment_code:state.payment,
     items:cartLines().map(x=>({id:x.backendId||x.id,product_id:x.backendId||null,name:x.name,price:Number(x.price),quantity:Number(x.qty),qty:Number(x.qty),category:x.cat||null})),
-    subtotal:subtotal(),discount:discount(),shipping:shipping(),total:total()
+    subtotal:subtotal(),discount:discount(),shipping:state.shipping,total:total()
   };
   confirmOrderBtn.disabled=true;confirmOrderBtn.textContent='Enviando pedido…';confirmMsg.classList.remove('show');
   const result=await pmOnline.createOrder(payload);
