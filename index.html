@@ -177,6 +177,15 @@ function onlineStatusKey(status){return String(status||'pending').toLowerCase().
 function onlineStatusLabel(status){const key=onlineStatusKey(status);return ({pending:'Pedido recibido',accepted:'En preparación',preparing:'En preparación',ready:'Pedido listo',picked_up:'En camino',in_transit:'En camino',delivered:'Entregado',rejected:'Pedido rechazado'})[key]||'Pedido recibido'}
 function onlineStepIndex(status){const key=onlineStatusKey(status);return ({pending:0,accepted:1,preparing:1,ready:2,picked_up:3,in_transit:3,delivered:4})[key]??0}
 function onlineTimeline(status){if(onlineStatusKey(status)==='rejected')return '<div class="notice" style="background:#fff0f1;color:#9d1e2b">Este pedido fue rechazado por PizzaMar.</div>';const labels=['Recibido','Preparación','Listo','En camino','Entregado'],current=onlineStepIndex(status);return `<div class="timeline">${labels.map((label,i)=>`<div class="step ${i<current?'done ':''}${i===current?'current':''}"><div class="circle"></div>${label}</div>`).join('')}</div>`}
+  function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[ch]);
+}
 function remoteOrderCard(order){const items=(order.items||[]).map(x=>`${Number(x.quantity||1)} × ${esc(x.name)}`).join(' + ')||'Detalle del pedido';return `<div class="panel"><div class="row"><h2 style="margin:0">Pedido N°${esc(order.id)}</h2><span class="tag">${esc(onlineStatusLabel(order.status))}</span></div><p><b>${items}</b></p>${onlineTimeline(order.status)}<div class="row"><span>${esc(order.payment_method||'Pago')}</span><b>${money(order.total)}</b></div></div>`}
 async function confirmOrder(){
   if(!state.cart.length)return;
