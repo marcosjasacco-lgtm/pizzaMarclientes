@@ -20,7 +20,7 @@
     .iconbtn{border:0;background:#fff;width:44px;height:44px;border-radius:50%;box-shadow:0 5px 18px rgba(0,0,0,.06);font-size:20px}
     .screen{display:none;padding:14px 16px 28px}.screen.active{display:block}
     .hero{border-radius:28px;overflow:hidden;background:#0b0b0b;min-height:340px;position:relative;box-shadow:var(--shadow)}
-    .heroCollage{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:3px;background:#291713}.heroCollage img{display:block;width:100%;height:100%;min-height:0;object-fit:cover}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.45) 48%,rgba(0,0,0,.08)),linear-gradient(0deg,rgba(0,0,0,.2),transparent 55%)}
+    .heroCollage{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);background:#291713}.heroCollage img{display:block;width:100%;height:100%;min-height:0;object-fit:cover}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.45) 48%,rgba(0,0,0,.08)),linear-gradient(0deg,rgba(0,0,0,.2),transparent 55%)}
     .heroContent{position:relative;z-index:2;color:#fff;padding:30px 24px;width:58%}.hero .eyebrow{font-weight:900;color:var(--yellow);font-size:18px}.hero h1{font-size:42px;line-height:.98;margin:8px 0 8px;letter-spacing:-1.4px}.hero p{margin:0 0 18px;color:#ddd;font-size:18px}.pricePill{display:inline-flex;background:var(--red);color:#fff;border-radius:999px;padding:11px 16px;font-weight:900;font-size:21px}
     .openrow{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center}.open{font-weight:900}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;background:#26c96d;margin-right:7px}.wa{color:var(--green);font-weight:800;text-decoration:none}
     .chips{display:flex;gap:9px;overflow:auto;padding:14px 0 4px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chip{white-space:nowrap;border:0;border-radius:999px;padding:11px 15px;background:#eae8e5;font-weight:800}.chip.active{background:var(--red);color:#fff}
@@ -39,7 +39,7 @@
     .openrow.closed{border-color:#f2b6bb;background:#fff4f5}.openrow.closed .dot{background:var(--red)}.closednotice{display:none;border-radius:18px;padding:14px 16px;background:#fff0f1;color:#9d1e2b;font-weight:800;margin:12px 0}.closednotice.show{display:block}.primary:disabled{opacity:.55;cursor:not-allowed}
     .bottomnav{position:fixed;z-index:35;bottom:0;left:50%;transform:translateX(-50%);width:min(760px,100%);background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 4px max(8px,env(safe-area-inset-bottom))}.navbtn{border:0;background:none;color:#777;font-size:12px;font-weight:700}.navbtn span{display:block;font-size:21px}.navbtn.active{color:var(--red)}
     .cartbar:not([hidden])~.bottomnav{display:none}
-    @media (max-width:480px){.hero{min-height:300px}.hero h1{font-size:35px}.heroContent{width:63%;padding:25px 18px}.heroCollage{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:1fr 1fr}.card img,.placeholder{height:120px}.card h3{font-size:17px}.money{font-size:18px}.options{grid-template-columns:1fr}.two{grid-template-columns:1fr}}
+    @media (max-width:480px){.hero{min-height:300px}.hero h1{font-size:35px}.heroContent{width:63%;padding:25px 18px}.heroCollage{grid-template-columns:minmax(0,1fr)}.grid{grid-template-columns:1fr 1fr}.card img,.placeholder{height:120px}.card h3{font-size:17px}.money{font-size:18px}.options{grid-template-columns:1fr}.two{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -49,7 +49,7 @@
   <main>
     <section id="home" class="screen active">
       <div class="hero">
-        <div class="heroCollage" aria-hidden="true"><img src="assets/super-especial.jpg" alt="" /><img src="assets/muzza.jpg" alt="" /><img src="assets/napolitana.jpg" alt="" /><img src="assets/jamon-morron.jpg" alt="" /><img src="assets/fugazzeta.jpg" alt="" /><img src="assets/caprese.jpg" alt="" /></div>
+        <div class="heroCollage" aria-hidden="true"><img src="assets/collage-pizzamar.png" alt="" /></div>
         <div class="heroContent"><div class="eyebrow">👑 SÚPER</div><h1>ESPECIAL</h1><p>4 sabores a elección</p><div class="pricePill">$ 17.000</div></div>
       </div>
       <div class="openrow" id="storeOpenRow"><div><span class="dot"></span><span class="open" id="storeOpenLabel">Consultando disponibilidad…</span><div class="sub" id="storeOpenSub">Delivery y retiro en Ecuador 8348</div></div><a class="wa" href="https://wa.me/5491128754818" target="_blank">WhatsApp</a></div>
