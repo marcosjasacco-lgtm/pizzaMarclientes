@@ -122,11 +122,18 @@ const products=[
 ];
 const SUPABASE_URL='https://nqfyxdptyqviyqlkulzq.supabase.co';
 const SUPABASE_KEY='sb_publishable_79TQSkWMhsZ8DJldFxAIxA_cubFt0l-';
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const pmOnline=window.PizzaMarOnline(db);
+let pmOnline=null;
+try {
+  if (window.supabase?.createClient && typeof window.PizzaMarOnline === 'function') {
+    pmOnline=window.PizzaMarOnline(window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY));
+  }
+} catch (error) {
+  console.error('No se pudo iniciar la conexión con PizzaMar.', error);
+}
 const cats=['Promos','Pizzas','Empanadas','Hamburguesas','Otros','Bebidas'];
 let state={cart:JSON.parse(localStorage.getItem('pm_cart')||'[]'),category:'Promos',fulfillment:'delivery',shipping:'near',payment:'cash'};
 let storefront={accepting_orders:false,discount_percent:15,shipping_near:500,shipping_far:1500};
+let storefrontUnavailable=false;
 let remoteOrderRefs=JSON.parse(localStorage.getItem('pm_online_orders')||'[]');
 let remoteOrderTimer=null;
 const el=id=>document.getElementById(id);
@@ -147,7 +154,7 @@ function removeItem(id){state.cart=state.cart.filter(i=>i.id!==id);persist();ren
 function updateCartBar(){const count=state.cart.reduce((s,x)=>s+x.qty,0);cartCount.textContent=count;cartTotal.textContent=money(subtotal());cartbar.hidden=count===0||!['home'].includes(document.querySelector('.screen.active')?.id)}
 function renderChips(){chips.innerHTML=cats.map(c=>`<button class="chip ${state.category===c?'active':''}" onclick="setCategory('${c}')">${({Promos:'🔥',Pizzas:'🍕',Empanadas:'🥟',Hamburguesas:'🍔',Otros:'🍟',Bebidas:'🥤'})[c]} ${c}</button>`).join('')}
 function setCategory(c){state.category=c;renderChips();renderProducts()}
-function renderProducts(){let arr=products.filter(p=>p.cat===state.category);if(state.category==='Promos')arr.sort((a,b)=>(a.id==='super'?-1:b.id==='super'?1:0));productsEl= document.getElementById('products');productsEl.innerHTML=arr.map(p=>`<article class="card">${p.img?`<img src="${p.img}" alt="${p.name}">`:`<div class="placeholder">${p.emoji||'🍕'}</div>`}<div class="cardBody"><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="row"><span class="money">${money(p.price)}</span><button class="plus" onclick="add('${p.id}')">+</button></div></div></article>`).join('')}
+function renderProducts(){let arr=products.filter(p=>p.cat===state.category);if(state.category==='Promos')arr.sort((a,b)=>(a.id==='super'?-1:b.id==='super'?1:0));const productsEl= document.getElementById('products');productsEl.innerHTML=arr.map(p=>`<article class="card">${p.img?`<img src="${p.img}" alt="${p.name}">`:`<div class="placeholder">${p.emoji||'🍕'}</div>`}<div class="cardBody"><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="row"><span class="money">${money(p.price)}</span><button class="plus" onclick="add('${p.id}')">+</button></div></div></article>`).join('')}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));if(id==='profile')renderProfile();if(id==='orders')renderOrders();updateCartBar();window.scrollTo(0,0)}
 function renderCart(){if(!state.cart.length){cartItems.innerHTML='<p>Tu carrito está vacío.</p>';cartSummary.innerHTML='';return}cartItems.innerHTML=cartLines().map(x=>`<div class="cartItem">${x.img?`<img src="${x.img}">`:`<div class="placeholder" style="height:72px">${x.emoji||'🍕'}</div>`}<div><b>${x.name}</b><div class="sub">${money(x.price)}</div><div class="qty"><button onclick="changeQty('${x.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${x.id}',1)">+</button></div></div><button class="trash" onclick="removeItem('${x.id}')">🗑</button></div>`).join('');cartSummary.innerHTML=summaryHtml()}
 function summaryHtml(){return `<div class="sumrow"><span>Compra</span><b>${money(subtotal())}</b></div><div class="sumrow discount"><span>Descuento app ${Number(storefront.discount_percent)||0}%</span><b>−${money(discount())}</b></div><div class="sumrow"><span>Envío</span><b>${money(shipping())}</b></div><div class="sumrow total"><span>Total</span><span>${money(total())}</span></div><div class="smallhint">El descuento aplica solo a la compra. El envío se cobra aparte.</div>`}
@@ -164,21 +171,26 @@ function applyRemoteCatalog(catalog){
 function applyStorefront(){
   const accepting=storefront.accepting_orders===true;
   storeOpenRow.classList.toggle('closed',!accepting);
-  storeOpenLabel.textContent=accepting?'Pedidos online abiertos':'Pedidos online cerrados';
-  storeOpenSub.textContent=accepting?'Delivery y retiro en Ecuador 8348':'Estamos preparando el local. Consultas por WhatsApp.';
+  storeOpenLabel.textContent=storefrontUnavailable?'No se pudo consultar la disponibilidad':accepting?'Pedidos online abiertos':'Pedidos online cerrados';
+  storeOpenSub.textContent=storefrontUnavailable?'Probá recargar la página o consultanos por WhatsApp.':accepting?'Delivery y retiro en Ecuador 8348':'Estamos preparando el local. Consultas por WhatsApp.';
+  closedNotice.textContent=storefrontUnavailable?'No se pudo conectar para recibir pedidos. Probá recargar la página o escribinos por WhatsApp.':'Los pedidos online están cerrados por el momento. Podés escribirnos por WhatsApp.';
   closedNotice.classList.toggle('show',!accepting);
   discountNotice.textContent=`🔥 ${Number(storefront.discount_percent)||0}% OFF aplicado a la compra. El envío se cobra aparte.`;
   confirmOrderBtn.disabled=!accepting;
-  if(!accepting){confirmMsg.textContent='Los pedidos online están cerrados por el momento.';confirmMsg.classList.add('show')}
+  if(!accepting){confirmMsg.textContent=storefrontUnavailable?'No se pudo conectar para recibir pedidos. Probá recargar la página o escribinos por WhatsApp.':'Los pedidos online están cerrados por el momento.';confirmMsg.classList.add('show')}
   else{confirmMsg.textContent='';confirmMsg.classList.remove('show')}
   if(document.querySelector('.screen.active')?.id==='cart')renderCart();
 }
 async function loadStorefront(){
-  const result=await pmOnline.getStorefront();
-  if(result.data?.settings){
+  let result;
+  try { result=pmOnline ? await pmOnline.getStorefront() : null; }
+  catch (error) { console.error('No se pudo consultar la disponibilidad.', error); }
+  if(result?.data?.settings){
+    storefrontUnavailable=false;
     storefront={...storefront,...result.data.settings};
     applyRemoteCatalog(result.data.catalog);
   }else{
+    storefrontUnavailable=true;
     storefront={...storefront,accepting_orders:false};
   }
   applyStorefront();
@@ -234,6 +246,7 @@ async function confirmOrder(){
 async function renderOrders(){
   ordersMsg.classList.remove('show');ordersMsg.textContent='';
   if(!remoteOrderRefs.length){activeOrder.innerHTML='<div class="panel"><p>Todavía no hiciste pedidos desde esta app.</p></div>';orderHistory.innerHTML='';return}
+  if(!pmOnline){ordersMsg.textContent='No se pudo conectar para consultar tus pedidos. Probá recargar la página.';ordersMsg.classList.add('show');return}
   const responses=await Promise.all(remoteOrderRefs.slice(0,12).map(ref=>pmOnline.getOrder(ref.id,ref.token)));
   const orders=responses.filter(x=>!x.error&&x.data).map(x=>x.data);
   if(!orders.length){ordersMsg.textContent='No se pudo actualizar el estado todavía. Volvé a intentar en unos segundos.';ordersMsg.classList.add('show');return}
