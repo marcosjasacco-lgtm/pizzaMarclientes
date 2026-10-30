@@ -161,10 +161,30 @@ function summaryHtml(){return `<div class="sumrow"><span>Compra</span><b>${money
 function setFulfillment(v){state.fulfillment=v;optDelivery.classList.toggle('selected',v==='delivery');optPickup.classList.toggle('selected',v==='pickup');shippingPanel.style.display=v==='pickup'?'none':'block';renderCart()}
 function setShipping(v){state.shipping=v;shipNear.classList.toggle('selected',v==='near');shipFar.classList.toggle('selected',v==='far');renderCart()}
 function catalogNameKey(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
+function catalogMatchKey(name,category){
+  const key=catalogNameKey(name);
+  if(catalogNameKey(category)!=='empanadas')return key;
+  return key.replace(/\bempanadas\b/g,'empanada')
+    .replace(/\bjamon\s+y\s+queso\b/g,'jyq')
+    .replace(/\bde\b|\bunidad\b/g,'')
+    .replace(/\s+/g,' ').trim();
+}
 function applyRemoteCatalog(catalog){
   (catalog||[]).forEach(item=>{
-    const key=catalogNameKey(item.name),existing=products.find(p=>catalogNameKey(p.name)===key);
-    if(existing){existing.price=Number(item.price)||existing.price;existing.backendId=item.id||existing.backendId;if(item.image)existing.img=item.image;return}
+    const key=catalogNameKey(item.name),matchKey=catalogMatchKey(item.name,item.category);
+    const existing=products.find(p=>catalogNameKey(p.name)===key) ||
+      (catalogNameKey(item.category)==='empanadas' && products.find(p=>catalogNameKey(p.cat)==='empanadas'&&catalogMatchKey(p.name,p.cat)===matchKey));
+    if(existing){
+      existing.price=Number.isFinite(Number(item.price))?Number(item.price):existing.price;
+      existing.backendId=item.id||existing.backendId;if(item.image)existing.img=item.image;
+      const oldId=`db_${item.id||key.replace(/ /g,'_')}`;
+      if(oldId!==existing.id&&state.cart.some(line=>line.id===oldId)){
+        state.cart.forEach(line=>{if(line.id===oldId)line.id=existing.id});
+        state.cart=state.cart.reduce((lines,line)=>{const prior=lines.find(x=>x.id===line.id);if(prior)prior.qty+=line.qty;else lines.push(line);return lines},[]);
+        persist();
+      }
+      return;
+    }
     products.push({id:`db_${item.id||key.replace(/ /g,'_')}`,backendId:item.id||null,name:item.name,price:Number(item.price)||0,cat:item.category||'Otros',desc:'Producto PizzaMar.',img:item.image||null,emoji:'🍕'});
   });
 }
